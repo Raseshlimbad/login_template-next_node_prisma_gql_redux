@@ -1,8 +1,6 @@
-import { PrismaClient } from "@prisma/client";
 import { GraphQLContext } from "../../types/context";
 import { register, login } from "../../services/auth.service";
 
-const prisma: PrismaClient = new PrismaClient();
 
 export const userResolvers = {
   Query: {
@@ -20,7 +18,7 @@ export const userResolvers = {
       {
         input,
       }: { input: { email: string; password: string; username: string } },
-      context: GraphQLContext
+    //   context: GraphQLContext
     ) => {
       try {
         return await register(input);

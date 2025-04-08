@@ -1,11 +1,9 @@
 import dotenv from "dotenv";
-import { PrismaClient } from "@prisma/client";
 import { configureApp } from "./config/app.config";
 import { createApolloServer } from "./config/apollo.config";
 
 dotenv.config();
 
-// const prisma = new PrismaClient();
 const port = process.env.PORT || 8001;
 const app = configureApp();
 const server = createApolloServer();

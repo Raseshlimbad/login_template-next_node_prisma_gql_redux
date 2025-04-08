@@ -1,12 +1,12 @@
-import { Request, Response, NextFunction } from 'express';
+import { Request, Response, NextFunction } from "express";
 import { PrismaClient } from "@prisma/client";
-import { verifyToken } from '../utils/tokenUtils';
+import { verifyToken } from "../utils/tokenUtils";
 
 const prisma = new PrismaClient();
 
 export const sessionMiddleware = async (
   req: Request,
-  res: Response,
+  _res: Response, // Prefix with underscore to indicate intentionally unused
   next: NextFunction
 ) => {
   const token = req.cookies.login_token;

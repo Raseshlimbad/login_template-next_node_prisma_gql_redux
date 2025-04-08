@@ -15,21 +15,11 @@ const Header = () => {
   const router = useRouter();
 
   useEffect(() => {
-    const token = Cookies.get("login_token");
-    const storedUser = localStorage.getItem("user");
-    
-    if (token && !isAuthenticated && storedUser) {
-      const userData = JSON.parse(storedUser);
-      dispatch(
-        login({
-          id: userData.id,
-          email: userData.email,
-          username: userData.username,
-          isAdmin: userData.isAdmin,
-        })
-      );
+    const userData = localStorage.getItem('user');
+    if (userData) {
+      dispatch(login(JSON.parse(userData)));
     }
-  }, [isAuthenticated]);
+  }, [dispatch]);
 
   const handleLogout = () => {
     Cookies.remove("login_token");
