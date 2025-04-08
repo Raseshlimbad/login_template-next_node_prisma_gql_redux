@@ -5,7 +5,7 @@ import {
   gql,
   HttpLink,
 } from "@apollo/client";
-import { LOGIN_USER, REGISTER_USER } from "./graphql";
+import { LOGIN_USER, REGISTER_USER } from '../graphql/mutations';
 import Cookies from "js-cookie";
 import { LoginUserResponse, LoginUserVariables, RegisterUserResponse, RegisterUserVariables } from "@/types/type";
 
