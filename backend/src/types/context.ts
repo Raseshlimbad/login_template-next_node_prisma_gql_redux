@@ -1,18 +1,19 @@
 import { Request, Response } from 'express';
 import { User } from './user';
 import { PrismaClient } from '@prisma/client';
+import { Session } from 'express-session';
 
-interface Session {
+interface CustomSession extends Session {
   user?: User;
 }
 
 interface CustomRequest extends Request {
-  session: Session;
+  session: CustomSession;
 }
 
 export interface GraphQLContext {
   req: CustomRequest;
   res: Response;
   prisma: PrismaClient;
-  session: Session;
+  session: CustomSession;
 }
