@@ -1,30 +1,15 @@
-import jwt, { JwtPayload } from "jsonwebtoken";
+import jwt from 'jsonwebtoken';
 
-interface MyJwtPayload extends JwtPayload {
+interface DecodedToken {
   userId: string;
+  iat: number;
+  exp: number;
 }
 
-// Function to verify the token
-export const verifyToken = (
-  authorizationHeader: string
-): MyJwtPayload | null => {
-  if (!authorizationHeader || !authorizationHeader.startsWith("Bearer ")) {
-    return null;
+export function verifyToken(token: string): DecodedToken {
+  if (!process.env.JWT_SECRET) {
+    throw new Error('JWT_SECRET is not defined');
   }
-
-  const token = authorizationHeader.replace("Bearer ", "");
-
-  try {
-    const decodedToken = jwt.verify(token, process.env.JWT_SECRET as string);
-    return decodedToken as MyJwtPayload;
-  } catch (err) {
-    if (err instanceof jwt.JsonWebTokenError) {
-      console.error("Invalid or expired token", err);
-    } else if (err instanceof jwt.TokenExpiredError) {
-      console.error("Token has expired");
-    } else {
-      console.error("Unknown error during token verification");
-    }
-    return null;
-  }
-};
+  
+  return jwt.verify(token, process.env.JWT_SECRET) as DecodedToken;
+}

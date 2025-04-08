@@ -11,13 +11,13 @@ import {
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import ApiClient from "@/lib/apiClient";
 import { login, signup } from "@/store/features/auth/authSlice";
 import { useAppDispatch } from "@/store/hooks";
 import { useState } from "react";
 import { toast } from "sonner";
 import { Eye, EyeOff } from "lucide-react"; // Add this import at the top
 import { useRouter } from "next/navigation";
+import { loginUser, registerUser } from '@/lib/apiClient';
 
 export default function AuthCard() {
   const [loginData, setLoginData] = useState({ email: "", password: "" });
@@ -48,38 +48,39 @@ export default function AuthCard() {
 
   const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault();
-
-    // Validate login data
+  
     if (!loginData.email || !loginData.password) {
       toast.error("Please fill in all fields");
       return;
     }
-
+  
     if (!validateEmail(loginData.email)) {
       toast.error("Please enter a valid email address");
       return;
     }
-
+  
     try {
-      const result = await apiClient.loginUser({
+      const response = await loginUser({
         email: loginData.email,
         password: loginData.password,
       });
-      if (result) {
+  
+      if (response && response.user) {
         const userData = {
-          id: result.user.id,
-          email: result.user.email,
-          username: result.user.username,
-          isAdmin: result.user.isAdmin,
+          id: response.user.id,
+          email: response.user.email,
+          username: response.user.username,
+          isAdmin: false,
         };
         localStorage.setItem("user", JSON.stringify(userData));
         dispatch(login(userData));
         toast.success(`Logged in successfully! 🎉`);
         router.push('/');
       }
-    } catch (error) {
-      console.log(error)
-      toast.error("Login failed ❌");
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    } catch (error: any) {
+      console.error('Login error:', error);
+      toast.error(error.message || "Login failed ❌");
     }
   };
 
@@ -120,31 +121,34 @@ export default function AuthCard() {
     }
 
     try {
-      const result = await apiClient.registerUser({
+      const result = await registerUser({
         username: signupData.username,
         email: signupData.email,
         password: signupData.password,
       });
-      if (result) {
+
+      if (result && result.user) {
         const userData = {
-          id: result.id,
-          email: result.email,
-          username: result.username,
-          isAdmin: false,
+          id: result.user.id,
+          email: result.user.email,
+          username: result.user.username,
+          isAdmin: result.user.isAdmin || false,
         };
         localStorage.setItem("user", JSON.stringify(userData));
         dispatch(signup(userData));
         toast.success(`Registration successful! 🎉`);
         router.push('/');
+      } else {
+        throw new Error('Invalid response from server');
       }
-    } catch (error) {
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    } catch (error: any) {
       console.error("Registration failed:", error);
-      toast.error("Registration failed");
+      toast.error(error.message || "Registration failed");
     }
   };
 
   const dispatch = useAppDispatch();
-  const apiClient = new ApiClient();
 
   // Add PasswordHelper component inside AuthCard
   const PasswordHelper = () => {

@@ -1,28 +1,16 @@
-import { gql } from 'graphql-tag'; 
+import { gql } from 'graphql-tag';
+import { userTypeDefs } from './user/user.typeDefs';
 
-const typeDefs = gql`
-  type User {
-    id: String!
-    username: String!
-    email: String!
-    password: String
-    createdAt: String!
-    updatedAt: String!
+const baseTypeDefs = gql`
+  scalar Date
+
+  type Query {
+    _: Boolean
   }
 
   type Mutation {
-    register(email: String!, password: String!, username: String): AuthPayload!
-    login(email: String!, password: String!): AuthPayload!
-  }
-
-  type AuthPayload {
-    token: String!
-    user: User!
-  }
-
-  type Query {
-    users: [User!]!
+    _: Boolean
   }
 `;
 
-export { typeDefs };
+export const typeDefs = [baseTypeDefs, userTypeDefs];
